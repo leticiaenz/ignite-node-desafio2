@@ -26,10 +26,11 @@ function checksExistsUserAccount(request, response, next) {
 function checksCreateTodosUserAvailability(request, response, next) {
   const { user } = request;
 
-  if (user.pro === true) {
-    return response.status(403).json({ error: 'Pro plan is already activated.' });
-  }
 
+  if (user.todos.length >= 10 && user.pro === false) {
+    return response.status(403).json({ error: 'Pro plan is not already activated.' });
+  }
+  
   return next();
 }
 
