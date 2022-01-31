@@ -26,7 +26,7 @@ function checksExistsUserAccount(request, response, next) {
 function checksCreateTodosUserAvailability(request, response, next) {
   const { user } = request;
 
-  if (user.pro == true) {
+  if (user.pro === true) {
     return response.status(403).json({ error: 'Pro plan is already activated.' });
   }
 
@@ -37,7 +37,27 @@ function checksTodoExists(request, response, next) {
   const { username } = request.headers;
   const { id } = request.params;
 
+  const user = users.find((user) => user.username === username);
+
+  if(!user) {
+    return response.status(404).json({ error: "Id not found"});
+  }
+
+  if(!validate(id)){
+    return response.status(400).json({ error: "Id not valid"});
+  }
+
+  const todo = user.todos.find(todo => todo.id === id);
+
+  if(!todo) {
+    return response.status(404).json({ error: "Todo not find"});
+  }
+
+
   request.user = user;
+
+  request.todo = todo;
+
   return next();
 }
 
@@ -47,7 +67,7 @@ function findUserById(request, response, next) {
   const user = users.find((user) => user.id === id);
 
   if(!user) {
-    return response.status(404).json({error: "Id not found"});
+    return response.status(404).json({ error: "Id not found"});
   }
 
   request.user = user;
